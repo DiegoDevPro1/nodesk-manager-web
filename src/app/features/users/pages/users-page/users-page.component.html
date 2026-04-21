@@ -1,0 +1,16 @@
+<section class="users-page">
+  <section class="users-page__content">
+    <app-data-table
+      [columns]="columns"
+      [rows]="usersView()"
+      [headerActions]="tableHeaderActions"
+      [rowActions]="tableRowActions"
+      [enableSearch]="true"
+      [searchPlaceholder]="'Buscar por nombre, correo o empresa'"
+      [searchIcon]="searchIcon"
+      (headerAction)="onTableHeaderAction($event)"
+      (rowAction)="onTableRowAction($event)"
+      (searchChange)="onTableSearch($event)"
+    ></app-data-table>
+  </section>
+</section>

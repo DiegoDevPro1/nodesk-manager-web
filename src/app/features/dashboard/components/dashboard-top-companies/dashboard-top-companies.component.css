@@ -1,0 +1,155 @@
+:host {
+  display: block;
+}
+
+.top-companies {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 1.1rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 18px 34px -26px rgba(15, 23, 42, 0.48);
+  padding: 1.25rem 1.4rem 1.45rem;
+}
+
+.top-companies__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-companies__title {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.top-companies__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.top-companies__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.top-companies__legend-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+}
+
+.top-companies__legend-dot--0 {
+  background: #2563eb;
+}
+
+.top-companies__legend-dot--1 {
+  background: #1d4ed8;
+}
+
+.top-companies__legend-dot--2 {
+  background: #38bdf8;
+}
+
+.top-companies__legend-dot--3 {
+  background: #6366f1;
+}
+
+.top-companies__chart {
+  margin-top: 0.25rem;
+}
+
+.top-companies__chart-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.top-companies__axis {
+  position: relative;
+  height: 9rem;
+}
+
+.top-companies__axis-line {
+  position: absolute;
+  inset-inline: 0;
+  border-top: 1px dashed rgba(148, 163, 184, 0.55);
+}
+
+.top-companies__axis-line:nth-child(1) {
+  top: 20%;
+}
+
+.top-companies__axis-line:nth-child(2) {
+  top: 40%;
+}
+
+.top-companies__axis-line:nth-child(3) {
+  top: 60%;
+}
+
+.top-companies__axis-line:nth-child(4) {
+  top: 80%;
+}
+
+.top-companies__bars {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+  align-items: end;
+  margin-top: -9rem;
+  padding-top: 9rem;
+}
+
+.top-companies__bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.top-companies__bar {
+  width: 100%;
+  border-radius: 0.8rem 0.8rem 0.35rem 0.35rem;
+  background: #dbeafe;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent);
+  box-shadow: 0 18px 34px -22px rgba(15, 23, 42, 0.7);
+  height: calc(20% + (var(--bar-value, 0) / 100000) * 80%);
+}
+
+.top-companies__bar--0 {
+  background-color: #2563eb;
+}
+
+.top-companies__bar--1 {
+  background-color: #1d4ed8;
+}
+
+.top-companies__bar--2 {
+  background-color: #38bdf8;
+}
+
+.top-companies__bar--3 {
+  background-color: #6366f1;
+}
+
+.top-companies__bar-label {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+@media (max-width: 767.98px) {
+  .top-companies__bars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,13 @@
+<section class="login-page">
+  <div class="login-page__layout">
+    <app-login-hero [contacts]="contacts" />
+
+    <div class="login-page__panel">
+      <app-login-form [loading]="loading()" (submitted)="onLogin($event)" />
+    </div>
+
+    <div class="login-page__responsive-contacts">
+      <app-login-contact-list [items]="contacts" />
+    </div>
+  </div>
+</section>

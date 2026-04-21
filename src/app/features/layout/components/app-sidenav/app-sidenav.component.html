@@ -1,0 +1,70 @@
+<aside class="layout-sidenav" aria-label="Navegacion principal">
+  <div class="layout-sidenav__inner">
+    <div class="layout-sidenav__brand" style="margin: 0 0.3rem">
+      <div class="layout-sidenav__brand-mark" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="layout-sidenav__brand-copy">
+        <p class="layout-sidenav__eyebrow ml-2">Nodesk</p>
+        <h2 class="layout-sidenav__brand-title ml-2">Manager</h2>
+      </div>
+    </div>
+
+    <nav class="layout-sidenav__nav mt-9">
+      <div class="layout-sidenav__group">
+        @for (item of primaryItems; track item.label) {
+          @if (item.route) {
+            <a
+              class="layout-sidenav__item"
+              [routerLink]="item.route"
+              routerLinkActive="layout-sidenav__item--active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [attr.aria-label]="item.label"
+            >
+              <span class="layout-sidenav__icon" aria-hidden="true">
+                <lucide-icon [img]="item.icon" [size]="21" [strokeWidth]="2.15" />
+              </span>
+
+              <span class="layout-sidenav__label">{{ item.label }}</span>
+
+              @if (item.badge) {
+                <span class="layout-sidenav__badge">{{ item.badge }}</span>
+              }
+            </a>
+          } @else {
+            <button type="button" class="layout-sidenav__item" [attr.aria-label]="item.label">
+              <span class="layout-sidenav__icon" aria-hidden="true">
+                <lucide-icon [img]="item.icon" [size]="21" [strokeWidth]="2.15" />
+              </span>
+
+              <span class="layout-sidenav__label">{{ item.label }}</span>
+
+              @if (item.badge) {
+                <span class="layout-sidenav__badge">{{ item.badge }}</span>
+              }
+            </button>
+          }
+        }
+      </div>
+    </nav>
+
+    <div class="layout-sidenav__footer">
+      <button
+        type="button"
+        class="layout-sidenav__logout"
+        aria-label="Cerrar sesion"
+        (click)="onLogout()"
+      >
+        <span class="layout-sidenav__icon" aria-hidden="true">
+          <lucide-icon [img]="logoutIcon" [size]="21" [strokeWidth]="2.15" />
+        </span>
+
+        <span class="layout-sidenav__label">Cerrar sesion</span>
+      </button>
+    </div>
+  </div>
+</aside>

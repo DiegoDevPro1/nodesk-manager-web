@@ -1,0 +1,14 @@
+@if (confirmDialogService.dialog(); as dialog) {
+  <section
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/45 px-4 py-8 backdrop-blur-[2px]"
+    (click)="closeFromBackdrop($event)"
+    aria-modal="true"
+    role="dialog"
+  >
+    <app-confirm-modal
+      [dialog]="dialog"
+      (confirmed)="confirmDialogService.confirm()"
+      (cancelled)="confirmDialogService.cancel()"
+    />
+  </section>
+}

@@ -1,0 +1,24 @@
+<section class="dashboard-page">
+
+
+  <div class="dashboard-page__grid">
+    <div class="dashboard-page__metrics">
+      <app-dashboard-metric-card
+        *ngFor="let metric of metrics"
+        [title]="metric.title"
+        [value]="metric.value"
+        [hint]="metric.hint"
+        [trendLabel]="metric.trendLabel"
+        [trendType]="metric.trendType"
+        [icon]="metric.icon"
+        [accent]="metric.accent"
+      />
+    </div>
+
+    <div class="dashboard-page__main">
+      <app-dashboard-top-companies class="dashboard-page__companies" [companies]="topCompanies" />
+
+      <app-dashboard-low-stock class="dashboard-page__low-stock" [products]="lowStockProducts" />
+    </div>
+  </div>
+</section>

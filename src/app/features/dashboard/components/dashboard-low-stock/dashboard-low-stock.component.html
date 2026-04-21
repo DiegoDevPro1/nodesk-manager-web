@@ -1,0 +1,13 @@
+<section class="low-stock">
+  <header class="low-stock__header">
+    <h2 class="low-stock__title">{{ title }}</h2>
+    <p class="low-stock__stock-title">Stock actual</p>
+  </header>
+
+  <ul class="low-stock__list">
+    <li class="low-stock__item" *ngFor="let product of products">
+      <span class="low-stock__name">{{ product.name }}</span>
+      <span class="low-stock__stock">{{ product.stock }}</span>
+    </li>
+  </ul>
+</section>

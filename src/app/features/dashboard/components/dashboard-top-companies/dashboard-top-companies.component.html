@@ -1,0 +1,39 @@
+<section class="top-companies">
+  <header class="top-companies__header">
+    <h2 class="top-companies__title">
+      {{ title }}
+    </h2>
+  </header>
+
+  <div class="top-companies__legend">
+    <span class="top-companies__legend-item" *ngFor="let company of companies; index as index">
+      <span
+        class="top-companies__legend-dot"
+        [ngClass]="'top-companies__legend-dot--' + index"
+      ></span>
+      {{ company.name }}
+    </span>
+  </div>
+
+  <div class="top-companies__chart">
+    <div class="top-companies__chart-inner">
+      <div class="top-companies__axis">
+        <span *ngFor="let _ of [1, 2, 3, 4]" class="top-companies__axis-line"></span>
+      </div>
+
+      <div class="top-companies__bars">
+        <div *ngFor="let company of companies; index as index" class="top-companies__bar-wrapper">
+          <div
+            class="top-companies__bar"
+            [ngClass]="'top-companies__bar--' + index"
+            [style.--bar-value]="company.value"
+          ></div>
+
+          <p class="top-companies__bar-label">
+            {{ company.name }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

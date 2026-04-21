@@ -1,0 +1,56 @@
+<article
+  class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl shadow-slate-900/10 ring-1"
+  [ngClass]="toneClasses.ringClass"
+>
+  <div class="flex flex-col items-center text-center">
+    <div
+      class="mb-5 flex h-14 w-14 items-center justify-center rounded-full"
+      [ngClass]="toneClasses.iconWrapper"
+    >
+      <svg
+        class="h-7 w-7"
+        [ngClass]="toneClasses.iconColor"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.71-3.14l-7.5-13a2 2 0 0 0-3.42 0Z"
+        />
+      </svg>
+    </div>
+
+    <h2 class="text-xl font-semibold tracking-tight text-slate-900">
+      {{ dialog.question }}
+    </h2>
+
+    @if (dialog.detail) {
+      <p class="mt-3 max-w-sm text-sm leading-6 text-slate-500">
+        {{ dialog.detail }}
+      </p>
+    }
+  </div>
+
+  <div class="mt-8 flex flex-col gap-3">
+    <button
+      type="button"
+      class="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      [ngClass]="toneClasses.confirmButton"
+      (click)="onConfirm()"
+    >
+      {{ dialog.confirmText }}
+    </button>
+
+    <button
+      type="button"
+      class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300"
+      (click)="onCancel()"
+    >
+      {{ dialog.cancelText }}
+    </button>
+  </div>
+</article>

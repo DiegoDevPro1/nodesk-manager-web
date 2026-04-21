@@ -1,0 +1,28 @@
+<ul
+  class="mx-auto flex w-fit flex-col items-start gap-3 sm:grid sm:w-full sm:max-w-[27rem] sm:grid-cols-2 sm:gap-x-6 sm:gap-y-4 lg:flex lg:max-w-none lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-x-10 lg:gap-y-6"
+>
+  @for (item of items; track item.label) {
+    <li
+      class="flex items-center gap-3 text-[1rem] font-semibold text-[#173cb9] sm:min-w-0 lg:gap-4 lg:text-xl"
+    >
+      <span
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2148c9] text-white shadow-[0_10px_18px_-10px_rgba(33,72,201,0.9)] lg:h-14 lg:w-14"
+      >
+        <lucide-icon
+          [img]="iconMap[item.icon]"
+          class="h-[1rem] w-[1rem] lg:h-7 lg:w-7"
+          [size]="24"
+          [strokeWidth]="2.25"
+        />
+      </span>
+
+      @if (item.href) {
+        <a [href]="item.href" class="transition hover:text-[#0f2c8f] sm:truncate">
+          {{ item.label }}
+        </a>
+      } @else {
+        <span>{{ item.label }}</span>
+      }
+    </li>
+  }
+</ul>

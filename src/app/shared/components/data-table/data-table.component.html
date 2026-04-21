@@ -1,0 +1,154 @@
+<div class="data-table">
+  <div
+    class="data-table__toolbar"
+    *ngIf="(headerActions && headerActions.length) || enableSearch"
+  >
+    <div class="data-table__toolbar-search" *ngIf="enableSearch">
+      <div class="data-table__search">
+        <span class="data-table__search-icon" *ngIf="searchIcon">
+          <lucide-icon [img]="searchIcon" [size]="15" [strokeWidth]="2" />
+        </span>
+        <input
+          class="data-table__search-input"
+          type="search"
+          [placeholder]="searchPlaceholder"
+          [value]="searchValue"
+          (input)="onSearchChange($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <div
+      class="data-table__toolbar-actions"
+      *ngIf="headerActions && headerActions.length"
+    >
+      <button
+        type="button"
+        class="data-table__toolbar-btn"
+        *ngFor="let action of headerActions"
+        [ngClass]="'data-table__toolbar-btn--' + (action.variant || 'ghost')"
+        (click)="onHeaderAction(action.key)"
+      >
+        <span class="data-table__toolbar-btn-icon" *ngIf="action.icon">
+          <lucide-icon [img]="action.icon" [size]="16" [strokeWidth]="2" />
+        </span>
+        <span class="data-table__toolbar-btn-label">
+          {{ action.label }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="rows.length; else emptyState">
+    <div class="data-table__scroll">
+      <div class="data-table__inner">
+        <div class="data-table__header">
+          <div
+            class="data-table__cell data-table__cell--header"
+            *ngFor="let column of columns"
+            [ngClass]="'data-table__cell--align-' + (column.align || 'start')"
+            [style.width]="column.width || null"
+          >
+            <span class="data-table__cell-content">
+              {{ column.label }}
+            </span>
+          </div>
+
+          <div
+            class="data-table__cell data-table__cell--header data-table__cell--actions"
+            *ngIf="rowActions && rowActions.length"
+            [ngClass]="'data-table__cell--align-end'"
+          >
+            <span class="data-table__cell-content data-table__cell-content--muted">
+              Acciones
+            </span>
+          </div>
+        </div>
+
+        <div class="data-table__body">
+          <div class="data-table__row" *ngFor="let row of pagedRows">
+            <div
+              class="data-table__cell"
+              *ngFor="let column of columns"
+              [ngClass]="'data-table__cell--align-' + (column.align || 'start')"
+              [style.width]="column.width || null"
+            >
+              <span class="data-table__cell-content">
+                {{ getValue(row, column.key) }}
+              </span>
+            </div>
+
+            <div
+              class="data-table__cell data-table__cell--actions"
+              *ngIf="rowActions && rowActions.length"
+              [ngClass]="'data-table__cell--align-end'"
+            >
+              <div class="data-table__row-actions">
+                <button
+                  type="button"
+                  class="data-table__row-action-btn"
+                  *ngFor="let action of rowActions"
+                  [ngClass]="'data-table__row-action-btn--' + (action.variant || 'ghost')"
+                  (click)="onRowAction(action.key, row)"
+                >
+                  <span class="data-table__row-action-icon" *ngIf="action.icon">
+                    <lucide-icon [img]="action.icon" [size]="14" [strokeWidth]="2" />
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="data-table__footer">
+      <div class="data-table__footer-info">
+        Mostrando {{ startIndex }}–{{ endIndex }} de {{ totalRows }}
+      </div>
+
+      <div class="data-table__footer-controls">
+        <div class="data-table__page-size">
+          <span class="data-table__page-size-label">Filas por página</span>
+          <select
+            class="data-table__page-size-select"
+            [value]="pageSize"
+            (change)="onPageSizeChange($any($event.target).value)"
+          >
+            <option *ngFor="let size of pageSizeOptions" [value]="size">
+              {{ size }}
+            </option>
+          </select>
+        </div>
+
+        <div class="data-table__pager">
+          <button
+            type="button"
+            class="data-table__pager-btn"
+            [disabled]="pageIndex === 0"
+            (click)="previousPage()"
+          >
+            ‹
+          </button>
+          <span class="data-table__pager-info"> {{ pageIndex + 1 }} / {{ totalPages }} </span>
+          <button
+            type="button"
+            class="data-table__pager-btn"
+            [disabled]="pageIndex + 1 >= totalPages"
+            (click)="nextPage()"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+    </footer>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="data-table__empty">
+      <p class="data-table__empty-text">
+        {{ emptyLabel }}
+      </p>
+    </div>
+  </ng-template>
+</div>
