@@ -3,6 +3,7 @@
     <app-data-table
       [columns]="columns"
       [rows]="usersView()"
+      [pageSize]="pageSize()"
       [headerActions]="tableHeaderActions"
       [rowActions]="tableRowActions"
       [enableSearch]="true"
@@ -11,6 +12,7 @@
       (headerAction)="onTableHeaderAction($event)"
       (rowAction)="onTableRowAction($event)"
       (searchChange)="onTableSearch($event)"
+      (pageSizeChange)="onTablePageSizeChange($event)"
     ></app-data-table>
   </section>
 </section>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   LucideAngularModule,
   Plus,
@@ -32,6 +33,7 @@ import { AlertService } from '../../../../core/services/alert.service';
 export class UsersPageComponent {
   private readonly usersService = inject(UsersService);
   private readonly alertService = inject(AlertService);
+  private readonly router = inject(Router);
 
   protected readonly headerIcon = ShieldUser;
   protected readonly searchIcon = Search;
@@ -49,14 +51,14 @@ export class UsersPageComponent {
   protected readonly allUsers = signal<User[]>([]);
 
   protected readonly users = computed(() => this.allUsers());
-  protected readonly usersView = computed(() =>
-    this.users().map((user) => this.getRowView(user)),
-  );
+  protected readonly usersView = computed(() => this.users().map((user) => this.getRowView(user)));
 
   protected readonly columns: DataTableColumn[] = [
     { key: 'name', label: 'Usuario' },
     { key: 'email', label: 'Correo' },
-    { key: 'roleName', label: 'Rol' },
+    { key: 'documentType', label: 'Tipo doc.' },
+    { key: 'documentNumber', label: 'N.º documento' },
+    { key: 'phone', label: 'Teléfono' },
     { key: 'companyName', label: 'Empresa' },
     { key: 'statusLabel', label: 'Estado', align: 'end' },
   ];
@@ -98,17 +100,12 @@ export class UsersPageComponent {
   ];
 
   constructor() {
-    effect(() => {
-      const page = this.page();
-      const limit = this.pageSize();
-      const search = this.search();
-
-      this.fetchUsers(page, limit, search);
-    });
+    this.fetchUsers(this.page(), this.pageSize(), this.search());
   }
 
   protected onTableHeaderAction(actionKey: string): void {
     if (actionKey === 'create') {
+      this.router.navigate(['/app/usuarios/nuevo']);
       return;
     }
 
@@ -132,13 +129,27 @@ export class UsersPageComponent {
   }
 
   protected onTableSearch(term: string): void {
-    this.search.set(term.trim());
+    const value = term.trim();
+    this.search.set(value);
+    this.fetchUsers(this.page(), this.pageSize(), value);
   }
 
+  protected onTablePageSizeChange(size: number): void {
+    if (!size || size <= 0) {
+      return;
+    }
+
+    this.pageSize.set(size);
+    this.page.set(1);
+    this.fetchUsers(1, size, this.search());
+  }
+  
   protected getRowView(row: User): unknown {
     return {
       ...row,
-      roleName: row.role?.name ?? '',
+      documentType: row.documentType?.trim() || 'No Definido',
+      documentNumber: row.documentNumber?.trim() || 'No Definido',
+      phone: row.phone?.trim() || 'No Definido',
       companyName: row.company?.name ?? 'Sin empresa',
       statusLabel: row.isActive ? 'Activo' : 'Inactivo',
     };

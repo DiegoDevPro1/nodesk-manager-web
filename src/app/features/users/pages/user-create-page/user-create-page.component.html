@@ -1,0 +1,97 @@
+<section class="user-create-page">
+  <app-page-header
+    [title]="'Nuevo usuario'"
+    [subtitle]="'Registra un nuevo usuario para tu empresa en Nodesk Manager.'"
+    [icon]="headerIcon"
+  >
+    <div page-header-actions class="flex items-center gap-2">
+      <app-button variant="outline" size="sm" (click)="onCancel()">
+        <span class="inline-flex items-center gap-1">
+          <lucide-icon [img]="backIcon" [size]="14" [strokeWidth]="2" />
+          <span>Volver a usuarios</span>
+        </span>
+      </app-button>
+    </div>
+  </app-page-header>
+
+  <main class="user-create-page__body">
+    <section class="user-create-page__card">
+      <header class="user-create-page__card-header">
+        <div>
+          <h2 class="user-create-page__card-title">Datos del usuario</h2>
+          <p class="user-create-page__card-subtitle">
+            Completa la información básica del usuario. Podrás ajustar sus permisos más adelante.
+          </p>
+        </div>
+      </header>
+
+      <form class="user-create-page__form" (submit)="onSubmit($event)">
+        <div class="user-create-page__grid">
+          <app-form-input
+            label="Nombre completo"
+            placeholder="Ej. Diego Pérez"
+            [required]="true"
+            [(value)]="name"
+          />
+
+          <app-form-input
+            label="Correo electrónico"
+            type="email"
+            placeholder="nombre@empresa.com"
+            [required]="true"
+            [(value)]="email"
+          />
+
+          <app-form-select
+            label="Tipo de documento"
+            [placeholder]="'Selecciona un tipo'"
+            [options]="documentTypeOptions"
+            [(value)]="documentType"
+          />
+
+          <app-form-input
+            label="N.º de documento"
+            placeholder="Ingresa el número de documento"
+            [(value)]="documentNumber"
+          />
+
+          <app-form-input
+            label="Teléfono"
+            type="tel"
+            placeholder="Ej. +51 999 999 999"
+            [(value)]="phone"
+          />
+
+          <app-form-select
+            label="Empresa"
+            [placeholder]="'Selecciona una empresa'"
+            [options]="companyOptions"
+            [(value)]="companyId"
+          />
+        </div>
+
+        <div class="user-create-page__grid user-create-page__grid--full">
+          <app-form-radio-group
+            label="Rol del usuario"
+            [options]="roleOptions"
+            direction="row"
+            [(value)]="role"
+          />
+
+          <app-form-radio-group
+            label="Estado"
+            [options]="statusOptions"
+            direction="row"
+            [(value)]="status"
+          />
+        </div>
+
+        <div class="user-create-page__footer">
+          <app-button variant="outline" type="button" (click)="onCancel()"> Cancelar </app-button>
+
+          <app-button variant="primary" type="submit"> Guardar usuario </app-button>
+        </div>
+      </form>
+    </section>
+  </main>
+</section>

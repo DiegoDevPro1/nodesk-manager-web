@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -32,7 +33,21 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'usuarios/nuevo',
+        canActivate: [roleGuard],
+        loadComponent: () =>
+          import('./features/users/pages/user-create-page/user-create-page.component').then(
+            (module) => module.UserCreatePageComponent,
+          ),
+        data: {
+          pageTitle: 'Nuevo usuario',
+          pageSubtitle: 'Registra un nuevo usuario para tu empresa',
+          roles: ['superadmin'],
+        },
+      },
+      {
         path: 'usuarios',
+        canActivate: [roleGuard],
         loadComponent: () =>
           import('./features/users/pages/users-page/users-page.component').then(
             (module) => module.UsersPageComponent,
@@ -40,6 +55,7 @@ export const routes: Routes = [
         data: {
           pageTitle: 'Usuarios',
           pageSubtitle: 'Gestiona los usuarios y sus permisos por empresa',
+          roles: ['superadmin'],
         },
       },
     ],

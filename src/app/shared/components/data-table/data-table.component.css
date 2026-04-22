@@ -198,7 +198,8 @@
 }
 
 .data-table__cell--actions {
-  width: 0.1fr;
+  width: 200px;
+  padding-right: 1rem;
 }
 
 .data-table__row-actions {

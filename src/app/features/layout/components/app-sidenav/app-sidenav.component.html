@@ -16,7 +16,7 @@
 
     <nav class="layout-sidenav__nav mt-9">
       <div class="layout-sidenav__group">
-        @for (item of primaryItems; track item.label) {
+        @for (item of visiblePrimaryItems; track item.label) {
           @if (item.route) {
             <a
               class="layout-sidenav__item"

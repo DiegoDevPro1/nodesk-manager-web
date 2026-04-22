@@ -17,6 +17,7 @@ import {
 import { LayoutNavItem } from '../../models/layout-nav-item.model';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { SessionService } from '../../../../core/services/session.service';
 
 @Component({
   selector: 'app-layout-sidenav',
@@ -31,6 +32,7 @@ export class AppSidenavComponent {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly confirmDialogService: ConfirmDialogService,
+    private readonly sessionService: SessionService,
   ) {}
   protected readonly primaryItems: LayoutNavItem[] = [
     {
@@ -59,6 +61,17 @@ export class AppSidenavComponent {
       route: '/app/usuarios',
     },
   ];
+
+  protected get visiblePrimaryItems(): LayoutNavItem[] {
+    const user = this.sessionService.user();
+    const isSuperAdmin = user?.role?.slug === 'superadmin';
+
+    if (isSuperAdmin) {
+      return this.primaryItems;
+    }
+
+    return this.primaryItems.filter((item) => item.route !== '/app/usuarios');
+  }
 
   protected readonly logoutIcon = LogOut;
 

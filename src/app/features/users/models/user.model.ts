@@ -19,6 +19,9 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  documentType: string | null;
+  documentNumber: string | null;
+  phone: string | null;
   role: UserRole;
   company: UserCompany | null;
   isActive: boolean;

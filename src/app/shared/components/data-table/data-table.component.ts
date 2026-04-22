@@ -49,6 +49,7 @@ export class DataTableComponent {
   @Output() headerAction = new EventEmitter<string>();
   @Output() rowAction = new EventEmitter<{ actionKey: string; row: unknown }>();
   @Output() searchChange = new EventEmitter<string>();
+   @Output() pageSizeChange = new EventEmitter<number>();
 
   protected pageIndex = 0;
 
@@ -114,6 +115,7 @@ export class DataTableComponent {
     if (!Number.isNaN(size) && size > 0) {
       this.pageSize = size;
       this.pageIndex = 0;
+      this.pageSizeChange.emit(this.pageSize);
     }
   }
 
