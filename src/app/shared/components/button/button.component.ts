@@ -17,5 +17,6 @@ export class ButtonComponent {
   @Input() size: ButtonSize = 'md';
   @Input() fullWidth = false;
   @Input() type: 'button' | 'submit' = 'button';
+  @Input() disabled = false;
 }
 

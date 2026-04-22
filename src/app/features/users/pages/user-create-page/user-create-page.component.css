@@ -14,8 +14,6 @@
 }
 
 .user-create-page__card {
-  margin: 0 auto;
-  max-width: 960px;
   border-radius: 1.25rem;
   background: #ffffff;
   border: 1px solid #e5e7eb;

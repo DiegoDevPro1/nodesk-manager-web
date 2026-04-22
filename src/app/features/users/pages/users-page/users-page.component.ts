@@ -167,7 +167,18 @@ export class UsersPageComponent {
         .getOwners({ page, limit, search: search || undefined })
         .toPromise();
 
-      const users = response?.data.data ?? [];
+      const users = (response?.data.data ?? []).map((rawUser: unknown) => {
+        const user = rawUser as User & {
+          document_type?: string | null;
+          document_number?: string | null;
+        };
+
+        return {
+          ...user,
+          documentType: user.documentType ?? user.document_type ?? null,
+          documentNumber: user.documentNumber ?? user.document_number ?? null,
+        };
+      });
 
       this.allUsers.set(users);
     } catch {

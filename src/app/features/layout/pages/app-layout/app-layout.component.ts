@@ -53,22 +53,16 @@ export class AppLayoutComponent {
 
         let icon: LucideIconData = LayoutDashboard;
 
-        switch (path) {
-          case 'usuarios':
-            icon = Users;
-            break;
-          case 'empresas':
-            icon = Building2;
-            break;
-          case 'proyectos':
-            icon = BriefcaseBusiness;
-            break;
-          case 'reportes':
-            icon = BarChart3;
-            break;
-          default:
-            icon = LayoutDashboard;
-            break;
+        if (path.startsWith('usuarios')) {
+          icon = Users;
+        } else if (path.startsWith('empresas')) {
+          icon = Building2;
+        } else if (path.startsWith('proyectos')) {
+          icon = BriefcaseBusiness;
+        } else if (path.startsWith('reportes')) {
+          icon = BarChart3;
+        } else {
+          icon = LayoutDashboard;
         }
 
         return {

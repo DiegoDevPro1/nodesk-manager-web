@@ -40,8 +40,8 @@ export const routes: Routes = [
             (module) => module.UserCreatePageComponent,
           ),
         data: {
-          pageTitle: 'Nuevo usuario',
-          pageSubtitle: 'Registra un nuevo usuario para tu empresa',
+          pageTitle: 'Usuarios',
+          pageSubtitle: 'Gestiona los usuarios y sus permisos por empresa',
           roles: ['superadmin'],
         },
       },
