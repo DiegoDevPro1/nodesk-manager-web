@@ -1,0 +1,111 @@
+<section class="user-detail-page">
+  <main class="user-detail-page__body">
+    <section class="user-detail-page__card">
+      <header class="user-detail-page__card-header">
+        <div class="user-detail-page__card-header-main">
+          <button type="button" class="user-detail-page__back-btn" (click)="onBack()">
+            <span class="user-detail-page__back-btn-icon">←</span>
+            <span>Volver a usuarios</span>
+          </button>
+
+          <div>
+            <h2 class="user-detail-page__card-title">
+              Detalle de usuario
+            </h2>
+            <p class="user-detail-page__card-subtitle">
+              Revisa la información básica y de empresa del usuario owner.
+            </p>
+          </div>
+        </div>
+
+        @if (user()) {
+          <div class="user-detail-page__card-status">
+            <span
+              class="user-detail-page__status-pill"
+              [class.user-detail-page__status-pill--inactive]="!user()?.isActive"
+            >
+              {{ user()?.isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+            <span class="user-detail-page__role-pill">
+              {{ resolveRoleLabel() }}
+            </span>
+          </div>
+        }
+      </header>
+
+      @if (loading()) {
+        <div class="user-detail-page__loading">
+          <div class="user-detail-page__spinner"></div>
+          <p>Cargando detalle de usuario...</p>
+        </div>
+      } @else {
+        @if (user()) {
+          <div class="user-detail-page__content">
+            <section class="user-detail-page__section">
+              <h3 class="user-detail-page__section-title">Información general</h3>
+
+              <div class="user-detail-page__grid">
+                <app-detail-field label="Nombre completo" [value]="user()?.name" />
+                <app-detail-field label="Correo electrónico" [value]="user()?.email" />
+                <app-detail-field
+                  label="Tipo de documento"
+                  [value]="user()?.documentType"
+                  emptyText="No definido"
+                />
+                <app-detail-field
+                  label="N.º de documento"
+                  [value]="user()?.documentNumber"
+                  emptyText="No definido"
+                />
+                <app-detail-field
+                  label="Teléfono"
+                  [value]="user()?.phone"
+                  emptyText="No definido"
+                />
+              </div>
+            </section>
+
+            <section class="user-detail-page__section">
+              <h3 class="user-detail-page__section-title">Cuenta y actividad</h3>
+
+              <div class="user-detail-page__grid">
+                <app-detail-field label="Rol" [value]="resolveRoleLabel()" />
+                <app-detail-field
+                  label="Último inicio de sesión"
+                  [value]="user()?.lastLoginAt ? (user()?.lastLoginAt | date: 'short') : null"
+                  emptyText="Sin actividad registrada"
+                />
+                <app-detail-field
+                  label="Creado el"
+                  [value]="user()?.createdAt ? (user()?.createdAt | date: 'short') : null"
+                />
+                <app-detail-field
+                  label="Actualizado el"
+                  [value]="user()?.updatedAt ? (user()?.updatedAt | date: 'short') : null"
+                />
+              </div>
+            </section>
+
+            @if (user()?.company) {
+              <section class="user-detail-page__section">
+                <h3 class="user-detail-page__section-title">Empresa</h3>
+
+                <div class="user-detail-page__grid">
+                  <app-detail-field label="Empresa" [value]="user()?.company?.name" />
+                  <app-detail-field label="RUC" [value]="user()?.company?.ruc" />
+                  <app-detail-field label="Teléfono" [value]="user()?.company?.phone" />
+                  <app-detail-field label="Dirección" [value]="user()?.company?.address" />
+                  <app-detail-field
+                    label="Estado de empresa"
+                    [value]="user()?.company?.isActive ? 'Activa' : 'Inactiva'"
+                    variant="badge"
+                  />
+                </div>
+              </section>
+            }
+          </div>
+        }
+      }
+    </section>
+  </main>
+</section>

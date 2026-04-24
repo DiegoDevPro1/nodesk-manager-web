@@ -17,16 +17,19 @@ export interface FormRadioOption {
 })
 export class FormRadioGroupComponent {
   @Input() label = '';
-  @Input() options: FormRadioOption[] = [];
-  @Input() direction: 'row' | 'column' = 'row';
-  @Input() value: string | null = null;
+  @Input() name = 'form-radio-group';
+  @Input() required = false;
+  @Input() disabled = false;
+  @Input() hint?: string;
   @Input() error?: string;
+  @Input() value: string | null = null;
+  @Input() options: FormRadioOption[] = [];
 
-  @Output() valueChange = new EventEmitter<string>();
+  @Output() valueChange = new EventEmitter<string | null>();
 
-  protected onSelect(value: string): void {
-    this.value = value;
-    this.valueChange.emit(value);
+  protected onChange(value: string): void {
+    this.value = value || null;
+    this.valueChange.emit(this.value);
   }
 }
 

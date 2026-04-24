@@ -46,6 +46,32 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'usuarios/:id/editar',
+        canActivate: [roleGuard],
+        loadComponent: () =>
+          import('./features/users/pages/user-edit-page/user-edit-page.component').then(
+            (module) => module.UserEditPageComponent,
+          ),
+        data: {
+          pageTitle: 'Usuarios',
+          pageSubtitle: 'Edita la información principal del usuario',
+          roles: ['superadmin'],
+        },
+      },
+      {
+        path: 'usuarios/:id/detalle',
+        canActivate: [roleGuard],
+        loadComponent: () =>
+          import('./features/users/pages/user-detail-page/user-detail-page.component').then(
+            (module) => module.UserDetailPageComponent,
+          ),
+        data: {
+          pageTitle: 'Usuarios',
+          pageSubtitle: 'Detalle de usuario owner',
+          roles: ['superadmin'],
+        },
+      },
+      {
         path: 'usuarios',
         canActivate: [roleGuard],
         loadComponent: () =>

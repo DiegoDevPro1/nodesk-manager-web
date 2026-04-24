@@ -8,12 +8,13 @@ import {
   inject,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 import { LoginRequest } from '../../models/login-request.model';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,10 @@ export class LoginFormComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
+
+  protected showPassword = false;
+  protected readonly eyeIcon = Eye;
+  protected readonly eyeOffIcon = EyeOff;
 
   protected onSubmit(): void {
     if (this.form.invalid || this.loading) {

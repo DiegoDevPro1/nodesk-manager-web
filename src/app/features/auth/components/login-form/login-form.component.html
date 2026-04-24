@@ -55,11 +55,24 @@
       <div class="relative mt-2">
         <input
           id="password"
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
           autocomplete="current-password"
-          class="min-h-[3rem] w-full rounded-[1rem] border border-slate-200 bg-white px-4 text-[0.95rem] text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#2850d7] focus:ring-4 focus:ring-[#2850d7]/10 lg:min-h-[3.4rem] lg:rounded-[1.1rem] lg:text-sm"
+          class="min-h-[3rem] w-full rounded-[1rem] border border-slate-200 bg-white pr-10 pl-4 text-[0.95rem] text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#2850d7] focus:ring-4 focus:ring-[#2850d7]/10 lg:min-h-[3.4rem] lg:rounded-[1.1rem] lg:text-sm"
         />
+
+        <button
+          type="button"
+          class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 disabled:cursor-not-allowed disabled:text-slate-300 lg:right-3.5"
+          [disabled]="loading"
+          (click)="showPassword = !showPassword"
+        >
+          <lucide-icon
+            [img]="showPassword ? eyeOffIcon : eyeIcon"
+            [size]="17"
+            [strokeWidth]="2"
+          />
+        </button>
       </div>
 
       @if (hasControlError('password', 'required')) {

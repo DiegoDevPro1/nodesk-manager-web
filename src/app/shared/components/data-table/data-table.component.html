@@ -1,8 +1,5 @@
 <div class="data-table">
-  <div
-    class="data-table__toolbar"
-    *ngIf="(headerActions && headerActions.length) || enableSearch"
-  >
+  <div class="data-table__toolbar" *ngIf="(headerActions && headerActions.length) || enableSearch">
     <div class="data-table__toolbar-search" *ngIf="enableSearch">
       <div class="data-table__search">
         <span class="data-table__search-icon" *ngIf="searchIcon">
@@ -18,10 +15,7 @@
       </div>
     </div>
 
-    <div
-      class="data-table__toolbar-actions"
-      *ngIf="headerActions && headerActions.length"
-    >
+    <div class="data-table__toolbar-actions" *ngIf="headerActions && headerActions.length">
       <button
         type="button"
         class="data-table__toolbar-btn"
@@ -39,7 +33,14 @@
     </div>
   </div>
 
-  <ng-container *ngIf="rows.length; else emptyState">
+  <ng-container *ngIf="loading">
+    <div class="data-table__loading">
+      <div class="data-table__spinner"></div>
+      <p class="data-table__loading-text">Cargando datos...</p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading && rows.length; else emptyState">
     <div class="data-table__scroll">
       <div class="data-table__inner">
         <div class="data-table__header">
@@ -59,9 +60,7 @@
             *ngIf="rowActions && rowActions.length"
             [ngClass]="'data-table__cell--align-end'"
           >
-            <span class="data-table__cell-content data-table__cell-content--muted">
-              Acciones
-            </span>
+            <span class="data-table__cell-content data-table__cell-content--muted"> Acciones </span>
           </div>
         </div>
 
@@ -88,11 +87,16 @@
                   type="button"
                   class="data-table__row-action-btn"
                   *ngFor="let action of rowActions"
-                  [ngClass]="'data-table__row-action-btn--' + (action.variant || 'ghost')"
+                  [ngClass]="resolveRowActionClasses(action, row)"
+                  [attr.title]="action.getLabel ? action.getLabel(row) : action.label"
                   (click)="onRowAction(action.key, row)"
                 >
-                  <span class="data-table__row-action-icon" *ngIf="action.icon">
-                    <lucide-icon [img]="action.icon" [size]="14" [strokeWidth]="2" />
+                  <span class="data-table__row-action-icon" *ngIf="action.icon || action.getIcon">
+                    <lucide-icon
+                      [img]="action.getIcon ? action.getIcon(row) : action.icon"
+                      [size]="14"
+                      [strokeWidth]="2"
+                    />
                   </span>
                 </button>
               </div>
@@ -115,7 +119,11 @@
             [value]="pageSize"
             (change)="onPageSizeChange($any($event.target).value)"
           >
-            <option *ngFor="let size of pageSizeOptions" [value]="size">
+            <option
+              *ngFor="let size of pageSizeOptions"
+              [value]="size"
+              [selected]="size === pageSize"
+            >
               {{ size }}
             </option>
           </select>
@@ -125,17 +133,17 @@
           <button
             type="button"
             class="data-table__pager-btn"
-            [disabled]="pageIndex === 0"
-            (click)="previousPage()"
+            [disabled]="page <= 1"
+            (click)="onPreviousPage()"
           >
             ‹
           </button>
-          <span class="data-table__pager-info"> {{ pageIndex + 1 }} / {{ totalPages }} </span>
+          <span class="data-table__pager-info"> {{ page }} / {{ totalPages }} </span>
           <button
             type="button"
             class="data-table__pager-btn"
-            [disabled]="pageIndex + 1 >= totalPages"
-            (click)="nextPage()"
+            [disabled]="page >= totalPages"
+            (click)="onNextPage()"
           >
             ›
           </button>

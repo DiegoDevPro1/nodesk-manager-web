@@ -1,0 +1,25 @@
+<div class="detail-field">
+  <div class="detail-field__label-row">
+    <div class="detail-field__label-main">
+      <span class="detail-field__label-text">
+        {{ label }}
+      </span>
+    </div>
+    <div class="detail-field__label-icon" *ngIf="icon">
+      <lucide-icon [img]="icon" [size]="15" [strokeWidth]="2" />
+    </div>
+  </div>
+
+  <div class="detail-field__value">
+    @if (hasValue) {
+      <span [ngClass]="['detail-field__value-text', 'detail-field__value-text--' + variant]">
+        {{ value }}
+      </span>
+    } @else {
+      <span class="detail-field__value-empty">
+        {{ emptyText }}
+      </span>
+    }
+  </div>
+</div>
+

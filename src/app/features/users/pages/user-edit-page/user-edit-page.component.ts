@@ -1,32 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { FormInputComponent } from '../../../../shared/components/form-input/form-input.component';
+import {
+  FormRadioGroupComponent,
+  FormRadioOption,
+} from '../../../../shared/components/form-radio-group/form-radio-group.component';
 import {
   FormSelectComponent,
   FormSelectOption,
 } from '../../../../shared/components/form-select/form-select.component';
-import { FormPasswordInputComponent } from '../../../../shared/components/form-password-input/form-password-input.component';
-import { UsersService } from '../../services/users.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { User } from '../../models/user.model';
+import { UsersService } from '../../services/users.service';
 
 @Component({
-  selector: 'app-user-create-page',
+  selector: 'app-user-edit-page',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, FormInputComponent, FormSelectComponent, FormPasswordInputComponent],
-  templateUrl: './user-create-page.component.html',
-  styleUrl: './user-create-page.component.css',
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    FormInputComponent,
+    FormSelectComponent,
+    FormRadioGroupComponent,
+  ],
+  templateUrl: './user-edit-page.component.html',
+  styleUrl: './user-edit-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserCreatePageComponent {
+export class UserEditPageComponent {
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly usersService = inject(UsersService);
+  private readonly alertService = inject(AlertService);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
+
+  protected readonly loading = signal(false);
+  protected readonly isSubmitting = signal(false);
+  protected userId: number | null = null;
+
   private _name = '';
   private _email = '';
-  private _password = '';
   private _documentType: string | null = null;
   private _documentNumber = '';
   private _phone = '';
+  private _isActive: string | null = 'true';
+
+  protected errors: Partial<
+    Record<'name' | 'email' | 'documentType' | 'documentNumber' | 'phone' | 'isActive', string>
+  > = {};
 
   protected get name(): string {
     return this._name;
@@ -44,15 +69,6 @@ export class UserCreatePageComponent {
   protected set email(value: string) {
     this._email = value;
     this.validateField('email');
-  }
-
-  protected get password(): string {
-    return this._password;
-  }
-
-  protected set password(value: string) {
-    this._password = value;
-    this.validateField('password');
   }
 
   protected get documentType(): string | null {
@@ -82,24 +98,45 @@ export class UserCreatePageComponent {
     this.validateField('phone');
   }
 
-  protected isSubmitting = false;
+  protected get isActive(): string | null {
+    return this._isActive;
+  }
 
-  protected errors: Partial<
-    Record<'name' | 'email' | 'password' | 'documentType' | 'documentNumber' | 'phone', string>
-  > = {};
+  protected set isActive(value: string | null) {
+    this._isActive = value || null;
+    this.validateField('isActive');
+  }
 
   protected readonly documentTypeOptions: FormSelectOption[] = [
     { label: 'DNI', value: 'DNI' },
     { label: 'RUC', value: 'RUC' },
+    { label: 'Carnet de extranjería', value: 'CE' },
     { label: 'Pasaporte', value: 'PASSPORT' },
   ];
 
-  constructor(
-    private readonly router: Router,
-    private readonly usersService: UsersService,
-    private readonly alertService: AlertService,
-    private readonly confirmDialogService: ConfirmDialogService,
-  ) {}
+  protected readonly statusOptions: FormRadioOption[] = [
+    {
+      label: 'Activo',
+      value: 'true',
+    },
+    {
+      label: 'Inactivo',
+      value: 'false',
+    },
+  ];
+
+  constructor() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : NaN;
+
+    if (!id || Number.isNaN(id)) {
+      this.router.navigate(['/app/usuarios']);
+      return;
+    }
+
+    this.userId = id;
+    this.loadUser(id);
+  }
 
   protected onCancel(): void {
     this.router.navigate(['/app/usuarios']);
@@ -108,7 +145,7 @@ export class UserCreatePageComponent {
   protected async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
 
-    if (this.isSubmitting) {
+    if (this.loading() || this.isSubmitting() || !this.userId) {
       return;
     }
 
@@ -119,11 +156,11 @@ export class UserCreatePageComponent {
     }
 
     const confirmed = await this.confirmDialogService.open({
-      question: '¿Crear usuario?',
-      detail: 'Se registrará un nuevo usuario owner en Nodesk Manager con los datos ingresados.',
-      confirmText: 'Crear usuario',
+      question: '¿Actualizar usuario?',
+      detail: 'Se guardarán los cambios realizados en la información principal del usuario.',
+      confirmText: 'Guardar cambios',
       cancelText: 'Cancelar',
-      tone: 'danger',
+      tone: 'warning',
       closeOnBackdrop: true,
     });
 
@@ -131,53 +168,76 @@ export class UserCreatePageComponent {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     try {
-      await this.usersService
-        .createOwner({
+      await firstValueFrom(
+        this.usersService.updateUser(this.userId, {
           name: this.name.trim(),
           email: this.email.trim(),
-          password: this.password,
           documentType: this.documentType as string,
           documentNumber: this.documentNumber.trim(),
           phone: this.phone.trim(),
-        })
-        .toPromise();
+          isActive: this.isActive === 'true',
+        }),
+      );
 
-      this.alertService.success('El usuario se creó correctamente.', {
-        title: 'Usuario creado',
+      await this.loadUser(this.userId);
+
+      this.alertService.success('La información del usuario se actualizó correctamente.', {
+        title: 'Usuario actualizado',
       });
-
-      this.router.navigate(['/app/usuarios']);
     } catch {
-      this.alertService.error('No se pudo crear el usuario.', {
-        title: 'Error al crear usuario',
+      this.alertService.error('No se pudo actualizar la información del usuario.', {
+        title: 'Error al actualizar usuario',
       });
     } finally {
-      this.isSubmitting = false;
+      this.isSubmitting.set(false);
     }
+  }
+
+  private async loadUser(id: number): Promise<void> {
+    if (this.loading()) {
+      return;
+    }
+
+    this.loading.set(true);
+
+    try {
+      const response = await firstValueFrom(this.usersService.getOwnerById(id));
+      this.fillForm(response.data);
+    } catch {
+      this.alertService.error('No se pudo cargar la información del usuario.', {
+        title: 'Error al obtener usuario',
+      });
+      this.router.navigate(['/app/usuarios']);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private fillForm(user: User): void {
+    this.name = user.name?.trim() ?? '';
+    this.email = user.email?.trim() ?? '';
+    this.documentType = this.normalizeDocumentType(user.documentType);
+    this.documentNumber = user.documentNumber?.trim() ?? '';
+    this.phone = user.phone?.trim() ?? '';
+    this.isActive = user.isActive ? 'true' : 'false';
   }
 
   private validateForm(): boolean {
     this.validateField('name');
     this.validateField('email');
-    this.validateField('password');
     this.validateField('documentType');
     this.validateField('documentNumber');
     this.validateField('phone');
+    this.validateField('isActive');
 
     return Object.keys(this.errors).length === 0;
   }
 
   private validateField(
-    field:
-      | 'name'
-      | 'email'
-      | 'password'
-      | 'documentType'
-      | 'documentNumber'
-      | 'phone',
+    field: 'name' | 'email' | 'documentType' | 'documentNumber' | 'phone' | 'isActive',
   ): void {
     const errors: typeof this.errors = { ...this.errors };
 
@@ -200,16 +260,6 @@ export class UserCreatePageComponent {
         errors.email = 'Ingresa un correo electrónico válido.';
       } else {
         delete errors.email;
-      }
-    }
-
-    if (field === 'password') {
-      if (!this.password) {
-        errors.password = 'La contraseña es obligatoria.';
-      } else if (this.password.length < 8) {
-        errors.password = 'La contraseña debe tener al menos 8 caracteres.';
-      } else {
-        delete errors.password;
       }
     }
 
@@ -246,6 +296,37 @@ export class UserCreatePageComponent {
       }
     }
 
+    if (field === 'isActive') {
+      if (this.isActive !== 'true' && this.isActive !== 'false') {
+        errors.isActive = 'Selecciona el estado del usuario.';
+      } else {
+        delete errors.isActive;
+      }
+    }
+
     this.errors = errors;
   }
+
+  private normalizeDocumentType(value: string | null): string | null {
+    const normalized = value?.trim().toUpperCase() ?? '';
+
+    if (!normalized) {
+      return null;
+    }
+
+    if (normalized === 'DNI' || normalized === 'RUC' || normalized === 'CE' || normalized === 'PASSPORT') {
+      return normalized;
+    }
+
+    if (normalized === 'CARNET DE EXTRANJERIA' || normalized === 'CARNET DE EXTRANJERÍA') {
+      return 'CE';
+    }
+
+    if (normalized === 'PASAPORTE') {
+      return 'PASSPORT';
+    }
+
+    return normalized;
+  }
 }
+

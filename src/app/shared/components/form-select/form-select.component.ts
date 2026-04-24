@@ -16,7 +16,7 @@ export interface FormSelectOption {
 })
 export class FormSelectComponent {
   @Input() label = '';
-  @Input() placeholder?: string;
+  @Input() placeholder: string | undefined = 'Seleccione una opción';
   @Input() required = false;
   @Input() disabled = false;
   @Input() hint?: string;

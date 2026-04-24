@@ -23,6 +23,9 @@ export interface DataTableRowAction {
   label: string;
   icon?: LucideIconData;
   variant?: DataTableActionVariant;
+  getLabel?: (row: unknown) => string;
+  getIcon?: (row: unknown) => LucideIconData | undefined;
+  getClass?: (row: unknown) => string | string[] | null | undefined;
 }
 
 @Component({
@@ -38,22 +41,27 @@ export class DataTableComponent {
   @Input() rows: unknown[] = [];
   @Input() emptyLabel = 'No hay datos para mostrar';
   @Input() pageSizeOptions: number[] = [5, 10, 25];
-  @Input() pageSize = 10;
+  @Input() pageSize = 5;
+  @Input() page = 1;
+  @Input() totalItems = 0;
   @Input() headerActions: DataTableHeaderAction[] = [];
   @Input() rowActions: DataTableRowAction[] = [];
   @Input() enableSearch = false;
   @Input() searchPlaceholder = 'Buscar...';
   @Input() searchIcon?: LucideIconData;
   @Input() searchValue = '';
+  @Input() loading = false;
 
   @Output() headerAction = new EventEmitter<string>();
   @Output() rowAction = new EventEmitter<{ actionKey: string; row: unknown }>();
   @Output() searchChange = new EventEmitter<string>();
-   @Output() pageSizeChange = new EventEmitter<number>();
-
-  protected pageIndex = 0;
+  @Output() pageSizeChange = new EventEmitter<number>();
+  @Output() pageChange = new EventEmitter<number>();
 
   protected get totalRows(): number {
+    if (this.totalItems && this.totalItems > 0) {
+      return this.totalItems;
+    }
     return this.rows.length;
   }
 
@@ -68,54 +76,25 @@ export class DataTableComponent {
     if (!this.totalRows) {
       return 0;
     }
-    return this.pageIndex * this.pageSize + 1;
+    return (this.page - 1) * this.pageSize + 1;
   }
 
   protected get endIndex(): number {
     if (!this.totalRows) {
       return 0;
     }
-    const end = (this.pageIndex + 1) * this.pageSize;
+    const end = this.page * this.pageSize;
     return end > this.totalRows ? this.totalRows : end;
   }
 
   protected get pagedRows(): unknown[] {
-    if (!this.pageSize || this.pageSize <= 0) {
-      return this.rows;
-    }
-    const start = this.pageIndex * this.pageSize;
-    return this.rows.slice(start, start + this.pageSize);
-  }
-
-  protected setPage(index: number): void {
-    if (!this.totalRows) {
-      this.pageIndex = 0;
-      return;
-    }
-    const max = this.totalPages - 1;
-    if (index < 0) {
-      this.pageIndex = 0;
-    } else if (index > max) {
-      this.pageIndex = max;
-    } else {
-      this.pageIndex = index;
-    }
-  }
-
-  protected nextPage(): void {
-    this.setPage(this.pageIndex + 1);
-  }
-
-  protected previousPage(): void {
-    this.setPage(this.pageIndex - 1);
+    return this.rows;
   }
 
   protected onPageSizeChange(value: string): void {
     const size = Number(value);
     if (!Number.isNaN(size) && size > 0) {
-      this.pageSize = size;
-      this.pageIndex = 0;
-      this.pageSizeChange.emit(this.pageSize);
+      this.pageSizeChange.emit(size);
     }
   }
 
@@ -134,5 +113,36 @@ export class DataTableComponent {
   protected onSearchChange(value: string): void {
     this.searchValue = value;
     this.searchChange.emit(value);
+  }
+
+  protected onPreviousPage(): void {
+    if (this.page <= 1) {
+      return;
+    }
+    this.pageChange.emit(this.page - 1);
+  }
+
+  protected onNextPage(): void {
+    if (this.page >= this.totalPages) {
+      return;
+    }
+    this.pageChange.emit(this.page + 1);
+  }
+
+  protected resolveRowActionClasses(action: DataTableRowAction, row: unknown): (string | null)[] {
+    const classes: (string | null)[] = [
+      'data-table__row-action-btn--' + (action.variant || 'ghost'),
+      'data-table__row-action-btn--action-' + action.key,
+    ];
+
+    const extra = action.getClass?.(row);
+
+    if (Array.isArray(extra)) {
+      classes.push(...extra);
+    } else if (extra) {
+      classes.push(extra);
+    }
+
+    return classes;
   }
 }

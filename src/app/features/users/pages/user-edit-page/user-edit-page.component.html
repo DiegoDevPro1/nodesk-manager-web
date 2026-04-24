@@ -1,0 +1,92 @@
+<section class="user-edit-page">
+  <main class="user-edit-page__body">
+    <section class="user-edit-page__card">
+      <header class="user-edit-page__card-header">
+        <div>
+          <h2 class="user-edit-page__card-title">Editar usuario</h2>
+          <p class="user-edit-page__card-subtitle">
+            Ajusta la información principal del usuario y prepara los cambios antes de guardar.
+          </p>
+        </div>
+      </header>
+
+      @if (loading()) {
+        <div class="user-edit-page__loading">
+          <div class="user-edit-page__spinner"></div>
+          <p class="user-edit-page__loading-text">Cargando datos del usuario...</p>
+        </div>
+      } @else {
+        <form class="user-edit-page__form" (submit)="onSubmit($event)">
+          <div class="user-edit-page__grid">
+            <app-form-input
+              label="Nombre completo"
+              placeholder="Ej. Diego Pérez"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="name"
+              [error]="errors.name"
+            />
+
+            <app-form-input
+              label="Correo electrónico"
+              type="email"
+              placeholder="nombre@empresa.com"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="email"
+              [error]="errors.email"
+            />
+
+            <app-form-select
+              label="Tipo de documento"
+              [placeholder]="'Selecciona tipo'"
+              [options]="documentTypeOptions"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="documentType"
+              [error]="errors.documentType"
+            />
+
+            <app-form-input
+              label="N. de documento"
+              placeholder="Ingresa el número de documento"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="documentNumber"
+              [error]="errors.documentNumber"
+            />
+
+            <app-form-input
+              label="Teléfono"
+              type="tel"
+              placeholder="Ej. +51 999 999 999"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="phone"
+              [error]="errors.phone"
+            />
+
+            <app-form-radio-group
+              label="Estado"
+              name="user-edit-status"
+              [options]="statusOptions"
+              [required]="true"
+              [disabled]="isSubmitting()"
+              [(value)]="isActive"
+              [error]="errors.isActive"
+            />
+          </div>
+
+          <div class="user-edit-page__footer">
+            <app-button variant="outline" type="button" [disabled]="isSubmitting()" (click)="onCancel()">
+              Cancelar
+            </app-button>
+            <app-button variant="primary" type="submit" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Guardando...' : 'Guardar cambios' }}
+            </app-button>
+          </div>
+        </form>
+      }
+    </section>
+  </main>
+</section>

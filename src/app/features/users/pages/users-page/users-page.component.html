@@ -4,15 +4,19 @@
       [columns]="columns"
       [rows]="usersView()"
       [pageSize]="pageSize()"
+      [page]="page()"
+      [totalItems]="totalUsers()"
       [headerActions]="tableHeaderActions"
       [rowActions]="tableRowActions"
       [enableSearch]="true"
       [searchPlaceholder]="'Buscar por nombre, correo o empresa'"
       [searchIcon]="searchIcon"
+      [loading]="loading()"
       (headerAction)="onTableHeaderAction($event)"
       (rowAction)="onTableRowAction($event)"
       (searchChange)="onTableSearch($event)"
       (pageSizeChange)="onTablePageSizeChange($event)"
+      (pageChange)="onTablePageChange($event)"
     ></app-data-table>
   </section>
 </section>
